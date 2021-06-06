@@ -7,6 +7,7 @@ private:
 	char team2Name;
 
 public:
+	Menu();
 	void rollDice();
 	void setShips();
 	void setTeamNames();
