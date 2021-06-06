@@ -142,12 +142,14 @@
     <ClCompile Include="Destroyer.cpp" />
     <ClCompile Include="Flottenkampf.cpp" />
     <ClCompile Include="Hunter.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Destroyer.h" />
     <ClInclude Include="Hunter.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Ship.h" />
   </ItemGroup>
