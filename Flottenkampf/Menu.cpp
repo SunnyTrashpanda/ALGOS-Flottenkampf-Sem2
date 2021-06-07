@@ -10,24 +10,50 @@
 
 Menu::Menu()
 {
+	srand(time(NULL));
 	std::cout << "Hello and welcome to FLOTTENKAMPF" << std::endl;
 	Teams team1 = setTeams();
 	Teams team2 = setTeams();
 
-	/*getStats(team1, 0);		
-	getStats(team2, 0);*/
-	//kann überprüfen ob team1 und team2 != null
+	Teams* ptrT1 = &team1;
+	Teams* ptrT2 = &team2;
 
-	team1.targetShip = setTargetShip(team2, team1);
-	team2.targetShip = setTargetShip(team1, team2);
+	setTargetShip(ptrT1, ptrT2);
 
 	std::cout << team1.targetShip << std::endl;
 	std::cout << team2.targetShip << std::endl;
 
-	Teams* ptrT1 = &team1;
-	Teams* ptrT2 = &team2;
+	char playerInput;
+	std::cout << "Now let the battle start! \nPlease press s.";
+	std::cin >> playerInput; 
 
-	oneRound(ptrT1, ptrT2);
+	bool endGame = false;
+
+	while(playerInput == 's')
+	{
+		endGame = oneRound(ptrT1, ptrT2);
+
+		if (!endGame)
+		{
+			std::cout << "Press 's' to continue";
+			std::cin >> playerInput;
+		}
+		else 
+		{
+			playerInput = 'x';
+		}
+	}
+
+	if (team1.shipCount == 0)
+	{
+		endBattle(team2, team1);
+	}
+	else
+	{
+		endBattle(team1, team2);
+	}
+	
+	
 }
 
 Teams Menu::setTeams()
@@ -108,8 +134,6 @@ void Menu::getStats(Teams tmpTeam, int arrPosition)
 {
 	std::cout << "Team name: " << tmpTeam.teamName << std::endl;
 	std::cout << "Ship type: " << tmpTeam.ships[arrPosition].getShipType() << std::endl;
-	std::cout << "Ship size: " << tmpTeam.ships[arrPosition].getShipSize() << std::endl;
-	std::cout << "Ship attak: " << tmpTeam.ships[arrPosition].getShipAtk() << std::endl;
 	std::cout << "Ship defense: " << tmpTeam.ships[arrPosition].getShipDef() << std::endl;
 	std::cout << "Ship count: " << tmpTeam.shipCount << std::endl;
 	std::cout << "Ship target position: " << tmpTeam.targetShip << std::endl;
@@ -118,7 +142,6 @@ void Menu::getStats(Teams tmpTeam, int arrPosition)
 int Menu::rollDice()
 {
 	int rolledNr = 0;
-	srand(time(NULL));
 
 	rolledNr = rand() % 10;
 
@@ -128,15 +151,13 @@ int Menu::rollDice()
 }
 
 
-bool Menu::attackShip(Teams *tmpAtkShip, int arrPosAtkShip, Teams *tmpTargetShip, int arrPosTargShip)
+bool Menu::attackShip(Teams *atkShip, int arrPosAtkShip, Teams *targetShip, int arrPosTargShip)
 {
-	Teams atkShip = *tmpAtkShip;
-	Teams targetShip = *tmpTargetShip;
 
-	int damage = atkShip.ships[arrPosAtkShip].getShipAtk();
+	int damage = atkShip->ships[arrPosAtkShip].getShipAtk();
 	int chance = rollDice();
-	int targetSize = targetShip.ships[arrPosTargShip].getShipSize();
-	int type = atkShip.ships[arrPosAtkShip].getShipType();
+	int targetSize = targetShip->ships[arrPosTargShip].getShipSize();
+	int type = atkShip->ships[arrPosAtkShip].getShipType();
 
 	if (type == 'D')
 	{
@@ -153,38 +174,27 @@ bool Menu::attackShip(Teams *tmpAtkShip, int arrPosAtkShip, Teams *tmpTargetShip
 			if (chance >= 9)
 			{
 				std::cout << "\nCrit Hit" << std::endl;
-				targetShip.ships[arrPosTargShip].getDamage(damage*2);
-
-				/*attakShip(targetShip, arrPosTargShip, damage*2);
-				getStats(targetShip, arrPosTargShip);*/
-
+				targetShip->ships[arrPosTargShip].getDamage(damage*2);
 				return false;
 			}
 			else
 			{ 
 				std::cout << "\nNormal attack" << std::endl;
-
+				targetShip->ships[arrPosTargShip].getDamage(damage);
 				return false;
 			}
 		}
 		else if (type == 'T')
 		{
 			std::cout << "\nShip is Tank" << std::endl;
-			targetShip.ships[arrPosTargShip].getDamage(damage);
-
-			/*attakShip(targetShip, arrPosTargShip, damage);
-			getStats(targetShip, arrPosTargShip);
-			play(atkShip, arrPosAtkShip, targetShip, arrPosTargShip);*/
-
+			targetShip->ships[arrPosTargShip].getDamage(damage);
+			//attackShip(atkShip, arrPosAtkShip, targetShip, arrPosTargShip);
 			return false;
 		}
 		else
 		{
 			std::cout << "\nNormal attack" << std::endl;
-			targetShip.ships[arrPosTargShip].getDamage(damage);
-
-			/*attakShip(targetShip, arrPosTargShip, damage);
-			getStats(targetShip, arrPosTargShip);*/
+			targetShip->ships[arrPosTargShip].getDamage(damage);
 			return false;
 		}
 	}
@@ -195,63 +205,123 @@ bool Menu::attackShip(Teams *tmpAtkShip, int arrPosAtkShip, Teams *tmpTargetShip
 	}
 }
 
-int Menu::setTargetShip(Teams team1, Teams team2)
+void Menu::setTargetShip(Teams* tmpTeam1, Teams* tmpTeam2)
 {
 	int min = 300;
 	int targetPosition = 10;
+	int min1 = 300;
+	int targetPosition1 = 10;
 
-	for (int i = 0; i < team1.shipCount; i++)
+	for (int i = 0; i < tmpTeam2->shipCount; i++)
 	{
-		int shipDef = team1.ships[i].getShipDef();
-		min = (min > shipDef) ? shipDef : min;
-		targetPosition = (min > shipDef) ? i : 0;
+		int shipDef = tmpTeam2->ships[i].getShipDef();
+
+		if (min1 > shipDef)
+		{
+			min1 = shipDef;
+			targetPosition1 = i;
+		}
 	}
 
-	return targetPosition;
+	for (int i = 0; i < tmpTeam1->shipCount; i++)
+	{
+		int shipDef = tmpTeam1->ships[i].getShipDef();
+
+		if (min > shipDef)
+		{
+			min = shipDef;
+			targetPosition = i;
+		}
+	}
+
+	tmpTeam1->targetShip = targetPosition1;
+	tmpTeam2->targetShip = targetPosition;
 }
 
-void Menu::oneRound(Teams *tmpTeam1, Teams *tmpTeam2)
+bool Menu::oneRound(Teams *team1, Teams *team2)
 {
-	Teams team1 = *tmpTeam1;
-	Teams team2 = *tmpTeam2;
 
 	bool enemyTurn1 = false;
 	bool enemyTurn2 = false;
 	int i1 = 0;
 	int i2 = 0;
-	int roundT1 = team1.shipCount;
-	int roundT2 = team2.shipCount;
+	int roundT1 = team1->shipCount;
+	int roundT2 = team2->shipCount;
 
 	do 
 	{
-		enemyTurn1 = attackShip(tmpTeam1, i1, tmpTeam2, team1.targetShip);
-		std::cout << enemyTurn1;
-		enemyTurn1 = (i1 < roundT1 - 1) ? false : true;
+		enemyTurn1 = attackShip(team1, i1, team2, team1->targetShip);
+		if(!enemyTurn1)
+		{
+			enemyTurn1 = (i1 < roundT1 - 1) ? false : true;
+		}
 		i1++;
 	} while (enemyTurn1 != true);
-	std::cout << "\n\nTarget stats after Team " << team2.teamName << "attack:" << std::endl;
-	getStats(team2, team1.targetShip);
+
+	roundT2 = team2->shipCount;
+
+	if (team2->ships[team1->targetShip].getShipDef() < 1)
+	{
+		std::cout << team2->ships[team1->targetShip].getShipType() << " got destroyed by Team " << team1->teamName << std::endl;
+		destroyShip(team2, team1->targetShip);
+
+		setTargetShip(team1, team2);
+	}
+
+	roundT2 = team2->shipCount;
 
 	do
 	{
-		enemyTurn2 = attackShip(tmpTeam2, i2, tmpTeam1, team2.targetShip);
-		std::cout << enemyTurn2;
-		enemyTurn2 = (i2 < roundT2 - 1) ? false : true;
+		enemyTurn2 = attackShip(team2, i2, team1, team2->targetShip);
+		if (!enemyTurn2)
+		{
+			enemyTurn2 = (i2 < roundT2 - 1) ? false : true;
+		}
 		i2++;
 	} while (enemyTurn2 != true);
-	std::cout << "\n\nTarget stats after Team " << team1.teamName << "attack:" << std::endl;
-	getStats(team1, team2.targetShip);
+
+	roundT1 = team1->shipCount;
+
+	if (team1->ships[team2->targetShip].getShipDef() < 1)
+	{
+		std::cout << team1->ships[team2->targetShip].getShipType() << " got destroyed by Team " << team2->teamName << std::endl;
+		destroyShip(team1, team2->targetShip);
+		setTargetShip(team1, team2);
+	}
+
+	roundT1 = team1->shipCount;
+
+	std::cout << "\n\nTarget stats after Team " << team1->teamName << " attacked: " << std::endl;
+	getStats(*team2, team1->targetShip);
+	std::cout << "\n\nTarget stats after Team " << team2->teamName << " attack:" << std::endl;
+	getStats(*team1, team2->targetShip);
+
+	
+	if (roundT1 == 0 || roundT2 == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-//Teams Menu::destroyShip(Teams tmpShip, int arrPosition)
-//{
-//	/*Ship* delShip = new Ship;
-//	delShip = tmpShip.ships[arrPosition];*/
-//
-//	//Ship delShip = tmpShip.ships[arrPosition];
-//
-//	delete &tmpShip.ships[arrPosition];
-//}
+void Menu::destroyShip(Teams* tmpShip, int arrPosition)
+{
+	tmpShip->ships[arrPosition].destroyShip();
+	for (int i = arrPosition; i < tmpShip->shipCount-1; i++)
+	{
+		tmpShip->ships[i] = tmpShip->ships[i+1];
+		tmpShip->ships[i+1].destroyShip();
+	}
+	tmpShip->shipCount -= 1;
+}
+
+void Menu::endBattle(Teams teamWin, Teams teamLose)
+{
+	std::cout << "Team " << teamWin.teamName << " winns!! :3" << std::endl;
+}
 
 //void Menu::setTargetShip(Teams tmpTeam)
 //{

@@ -17,9 +17,8 @@ public:
 	int getShipDef();
 	char getShipType();
 	void getDamage(int damage);
-	void destroyShip();
 	
-	/*void damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
-	void destroyShip(Teams tmpShip, int arrPosition);*/
+	//void damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
+	void destroyShip();
 };
 

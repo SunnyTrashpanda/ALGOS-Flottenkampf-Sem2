@@ -12,10 +12,9 @@ public:
 	void getStats(Teams tmpTeam, int arrPositio);
 	int rollDice();
 	bool attackShip(Teams *atkShip, int arrPosAtkShip, Teams *targetShip, int arrPosTargShip);
-	int setTargetShip(Teams team1, Teams team2);
-	void oneRound(Teams *team1, Teams *team2);
-
-	//void attakShip(Teams targetShip, int arrPosTargShip, int damage);
-	//Teams destroyShip(Teams tmpShip, int arrPosition);
+	void setTargetShip(Teams *tmpTeam1, Teams *tmpTeam2);
+	bool oneRound(Teams *team1, Teams *team2);
+	void destroyShip(Teams *tmpShip, int arrPosition);
+	void endBattle(Teams team1, Teams team2);
 };
 

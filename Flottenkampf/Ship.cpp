@@ -35,6 +35,7 @@ void Ship::destroyShip()
 	def = NULL;
 }
 
+
 //void Ship::damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip)
 //{
 //	int atkShipAtk = getShipAtk(atkShip, arrPosAtkShip);
@@ -46,12 +47,4 @@ void Ship::destroyShip()
 //	{
 //		destroyShip(targetShip, arrPosTargShip);
 //	}
-//}
-
-//void Ship::destroyShip(Teams tmpShip, int arrPosition)
-//{
-//	tmpShip.ships[arrPosition].shipType = NULL;
-//	tmpShip.ships[arrPosition].size = NULL;
-//	tmpShip.ships[arrPosition].atk = NULL;
-//	tmpShip.ships[arrPosition].def = NULL;
 //}
