@@ -14,10 +14,20 @@ Menu::Menu()
 	Teams team1 = setTeams();
 	Teams team2 = setTeams();
 
-	/*getStats(team1, 0);		Kann überprüfen ob team1 und team2 != NULL
+	/*getStats(team1, 0);		
 	getStats(team2, 0);*/
+	//kann überprüfen ob team1 und team2 != null
 
-	play(team1, 0, team2, 0);
+	team1.targetShip = setTargetShip(team2, team1);
+	team2.targetShip = setTargetShip(team1, team2);
+
+	std::cout << team1.targetShip << std::endl;
+	std::cout << team2.targetShip << std::endl;
+
+	Teams* ptrT1 = &team1;
+	Teams* ptrT2 = &team2;
+
+	oneRound(ptrT1, ptrT2);
 }
 
 Teams Menu::setTeams()
@@ -30,14 +40,6 @@ Teams Menu::setTeams()
 	std::cout << "\nset up your ships:" << std::endl;
 	std::cout << "\nselect up to 9 ships for your team!" << std::endl;
 	team = createTeam(team);
-
-	/*std::cout << "\nDeclare Team 2 name:";
-	std::cin >> team2.teamName;
-	std::cout << "Team 2 is now called: " << team2.teamName << std::endl;
-
-	std::cout << "\nSet up your ships:" << std::endl;
-	std::cout << "\nSelect up to 9 ships for your team!" << std::endl;
-	createTeam(team2);*/
 
 	return team;
 }
@@ -88,6 +90,7 @@ Teams Menu::createTeam(Teams Team)
 		{
 			tmpTeam = addShip(playerInput, tmpTeam, countShips);
 			getStats(tmpTeam, countShips);
+			tmpTeam.shipCount = countShips+1;
 		}
 		else
 		{
@@ -99,10 +102,7 @@ Teams Menu::createTeam(Teams Team)
 	return tmpTeam;
 }
 
-void Menu::setTargetShip()
-{
 
-}
 
 void Menu::getStats(Teams tmpTeam, int arrPosition)
 {
@@ -111,11 +111,8 @@ void Menu::getStats(Teams tmpTeam, int arrPosition)
 	std::cout << "Ship size: " << tmpTeam.ships[arrPosition].getShipSize() << std::endl;
 	std::cout << "Ship attak: " << tmpTeam.ships[arrPosition].getShipAtk() << std::endl;
 	std::cout << "Ship defense: " << tmpTeam.ships[arrPosition].getShipDef() << std::endl;
-}
-
-char Menu::getShipType(Teams tmpShip, int arrPosition)
-{
-	return tmpShip.ships[arrPosition].getShipType();
+	std::cout << "Ship count: " << tmpTeam.shipCount << std::endl;
+	std::cout << "Ship target position: " << tmpTeam.targetShip << std::endl;
 }
 
 int Menu::rollDice()
@@ -125,12 +122,125 @@ int Menu::rollDice()
 
 	rolledNr = rand() % 10;
 
+	std::cout << "\nYou rolled " << rolledNr << " on hit chance!" << std::endl;
+
 	return rolledNr;
 }
 
-void Menu::attakShip(Teams targetShip, int arrPosTargShip, int damage)
+
+bool Menu::attackShip(Teams *tmpAtkShip, int arrPosAtkShip, Teams *tmpTargetShip, int arrPosTargShip)
 {
-	targetShip.ships[arrPosTargShip].getDamage(damage);
+	Teams atkShip = *tmpAtkShip;
+	Teams targetShip = *tmpTargetShip;
+
+	int damage = atkShip.ships[arrPosAtkShip].getShipAtk();
+	int chance = rollDice();
+	int targetSize = targetShip.ships[arrPosTargShip].getShipSize();
+	int type = atkShip.ships[arrPosAtkShip].getShipType();
+
+	if (type == 'D')
+	{
+		std::cout << "\nShip is destroyer -> +2 on roll" << std::endl;
+		chance += 2;
+	}
+
+	if (chance >= targetSize)
+	{
+		if (type == 'H')
+		{
+			std::cout << "\nShip is hunter" << std::endl;
+
+			if (chance >= 9)
+			{
+				std::cout << "\nCrit Hit" << std::endl;
+				targetShip.ships[arrPosTargShip].getDamage(damage*2);
+
+				/*attakShip(targetShip, arrPosTargShip, damage*2);
+				getStats(targetShip, arrPosTargShip);*/
+
+				return false;
+			}
+			else
+			{ 
+				std::cout << "\nNormal attack" << std::endl;
+
+				return false;
+			}
+		}
+		else if (type == 'T')
+		{
+			std::cout << "\nShip is Tank" << std::endl;
+			targetShip.ships[arrPosTargShip].getDamage(damage);
+
+			/*attakShip(targetShip, arrPosTargShip, damage);
+			getStats(targetShip, arrPosTargShip);
+			play(atkShip, arrPosAtkShip, targetShip, arrPosTargShip);*/
+
+			return false;
+		}
+		else
+		{
+			std::cout << "\nNormal attack" << std::endl;
+			targetShip.ships[arrPosTargShip].getDamage(damage);
+
+			/*attakShip(targetShip, arrPosTargShip, damage);
+			getStats(targetShip, arrPosTargShip);*/
+			return false;
+		}
+	}
+	else
+	{
+		std::cout << "\nAttack failed - enemy turn of attack" << std::endl;
+		return true;
+	}
+}
+
+int Menu::setTargetShip(Teams team1, Teams team2)
+{
+	int min = 300;
+	int targetPosition = 10;
+
+	for (int i = 0; i < team1.shipCount; i++)
+	{
+		int shipDef = team1.ships[i].getShipDef();
+		min = (min > shipDef) ? shipDef : min;
+		targetPosition = (min > shipDef) ? i : 0;
+	}
+
+	return targetPosition;
+}
+
+void Menu::oneRound(Teams *tmpTeam1, Teams *tmpTeam2)
+{
+	Teams team1 = *tmpTeam1;
+	Teams team2 = *tmpTeam2;
+
+	bool enemyTurn1 = false;
+	bool enemyTurn2 = false;
+	int i1 = 0;
+	int i2 = 0;
+	int roundT1 = team1.shipCount;
+	int roundT2 = team2.shipCount;
+
+	do 
+	{
+		enemyTurn1 = attackShip(tmpTeam1, i1, tmpTeam2, team1.targetShip);
+		std::cout << enemyTurn1;
+		enemyTurn1 = (i1 < roundT1 - 1) ? false : true;
+		i1++;
+	} while (enemyTurn1 != true);
+	std::cout << "\n\nTarget stats after Team " << team2.teamName << "attack:" << std::endl;
+	getStats(team2, team1.targetShip);
+
+	do
+	{
+		enemyTurn2 = attackShip(tmpTeam2, i2, tmpTeam1, team2.targetShip);
+		std::cout << enemyTurn2;
+		enemyTurn2 = (i2 < roundT2 - 1) ? false : true;
+		i2++;
+	} while (enemyTurn2 != true);
+	std::cout << "\n\nTarget stats after Team " << team1.teamName << "attack:" << std::endl;
+	getStats(team1, team2.targetShip);
 }
 
 //Teams Menu::destroyShip(Teams tmpShip, int arrPosition)
@@ -143,50 +253,17 @@ void Menu::attakShip(Teams targetShip, int arrPosTargShip, int damage)
 //	delete &tmpShip.ships[arrPosition];
 //}
 
-void Menu::play(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip)
-{
-	int damage = atkShip.ships[arrPosAtkShip].getShipAtk();
-	int chance = rollDice();
-	int targetSize = targetShip.ships[arrPosTargShip].getShipSize();
-	int type = getShipType(atkShip, arrPosAtkShip);
-
-	if (type == 'D')
-	{
-		std::cout << "Ship is destroyer" << std::endl;
-		chance += 2;
-	}
-
-	if (chance >= targetSize)
-	{
-		if (type == 'H')
-		{
-			std::cout << "Ship is hunter" << std::endl;
-
-			if (chance <= 9)
-			{
-				std::cout << "Crit Hit" << std::endl;
-				/*attakShip(targetShip, arrPosTargShip, damage*2);
-				getStats(targetShip, arrPosTargShip);*/
-			}
-		}
-		else if (type == 'T')
-		{
-			std::cout << "Ship is Tank" << std::endl;
-			/*attakShip(targetShip, arrPosTargShip, damage);
-			getStats(targetShip, arrPosTargShip);
-			play(atkShip, arrPosAtkShip, targetShip, arrPosTargShip);*/
-		}
-		else
-		{
-			std::cout << "Normal attak" << std::endl;
-			/*attakShip(targetShip, arrPosTargShip, damage);
-			getStats(targetShip, arrPosTargShip);*/
-		}
-	}
-	else
-	{
-		std::cout << "Attak failed - enemy attaks" << std::endl;
-		/*attakShip(atkShip, arrPosAtkShip, damage);
-		getStats(atkShip, arrPosAtkShip);*/
-	}
-}
+//void Menu::setTargetShip(Teams tmpTeam)
+//{
+//	int playerInput;
+//
+//	std::cout << "\nSelect one Ship you want to attack: " << std::endl;
+//
+//	for (int i = 0; i < tmpTeam.shipCount - 1; i++)
+//	{
+//		std::cout << "[ " << i << "-" << tmpTeam.ships[i].getShipType() << " ] ";
+//	}
+//
+//	std::cout << "Please select a number: ";
+//	std::cin >> playerInput;
+//}

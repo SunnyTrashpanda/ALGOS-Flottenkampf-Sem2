@@ -1,15 +1,11 @@
 #pragma once
 #include "Ship.h"
 
-class Hunter : public Ship // Schiffstyp Jäger
+class Hunter : public Ship
 {
 private:
-	/*int size;
-	int atk;
-	int def;*/
 
 public:
 	Hunter();
-	void critDMG();
 };
 

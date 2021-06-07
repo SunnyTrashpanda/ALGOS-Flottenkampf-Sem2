@@ -10,6 +10,7 @@ protected:
 	int atk;
 	int def;
 
+
 public:
 	int getShipAtk();
 	int getShipSize();
@@ -19,7 +20,6 @@ public:
 	void destroyShip();
 	
 	/*void damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
-	void getDamage(Teams tmpShip, int arrPosition, int damage);
 	void destroyShip(Teams tmpShip, int arrPosition);*/
 };
 

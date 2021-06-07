@@ -47,10 +47,7 @@ void Ship::destroyShip()
 //		destroyShip(targetShip, arrPosTargShip);
 //	}
 //}
-//
-//void getDamage(Teams tmpShip, int arrPosition, int damage)
-//{}
-//
+
 //void Ship::destroyShip(Teams tmpShip, int arrPosition)
 //{
 //	tmpShip.ships[arrPosition].shipType = NULL;
