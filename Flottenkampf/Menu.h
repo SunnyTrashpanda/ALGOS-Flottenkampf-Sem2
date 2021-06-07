@@ -3,17 +3,18 @@
 class Menu
 {
 private:
-	int diceNr;
 
 public:
 	Menu();
-	void setTeams();
-	void createTeam(Teams Team);
+	Teams setTeams();
+	Teams createTeam(Teams Team);
 	Teams addShip(char shipType, Teams tmpTeam, int arrPosition);
+	void setTargetShip();
 	void getStats(Teams tmpTeam, int arrPositio);
 	char getShipType(Teams tmpShip, int arrPosition);
-	void rollDice();
-	void attakShip();
-	Teams destroyShip(Teams tmpShip, int arrPosition);
+	int rollDice();
+	void attakShip(Teams targetShip, int arrPosTargShip, int damage);
+	//Teams destroyShip(Teams tmpShip, int arrPosition);
+	void play(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
 };
 

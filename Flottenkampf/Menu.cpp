@@ -6,64 +6,40 @@
 #include "Tank.h"
 
 #include <iostream>
+#include <time.h>
 
 Menu::Menu()
 {
 	std::cout << "Hello and welcome to FLOTTENKAMPF" << std::endl;
-	setTeams();
+	Teams team1 = setTeams();
+	Teams team2 = setTeams();
+
+	/*getStats(team1, 0);		Kann überprüfen ob team1 und team2 != NULL
+	getStats(team2, 0);*/
+
+	play(team1, 0, team2, 0);
 }
 
-void Menu::setTeams()
+Teams Menu::setTeams()
 {
-	Teams team1;
-	Teams team2;
-
-	Hunter h1;
-	Hunter h2;
-	Destroyer d1;
-	Tank t1;
-
-	/*team1.ships[0] = h1;
-	team1.ships[1] = d1;
-
-	team2.ships[0] = h2;
-	team2.ships[1] = t1;*/
-
-	std::cout << "\nDeclare Team 1 name:";
-	std::cin >> team1.teamName;
-	std::cout << "Team 1 is now called: " << team1.teamName << std::endl;
+	Teams team;
+	std::cout << "\nDeclare Team name:";
+	std::cin >> team.teamName;
+	std::cout << "Team is now called: " << team.teamName << std::endl;
 
 	std::cout << "\nset up your ships:" << std::endl;
 	std::cout << "\nselect up to 9 ships for your team!" << std::endl;
-	createTeam(team1);
+	team = createTeam(team);
 
-	/*team1.ships[0].shipType = 'h';
-	team1.ships[0].size = 4;
-	team1.ships[0].atk = 30;
-	team1.ships[0].def = 75;
-
-	team1.ships[1].shipType = 'd';
-	team1.ships[1].size = 6;
-	team1.ships[1].atk = 60;
-	team1.ships[1].def = 150;*/
-
-	std::cout << "\nDeclare Team 2 name:";
+	/*std::cout << "\nDeclare Team 2 name:";
 	std::cin >> team2.teamName;
 	std::cout << "Team 2 is now called: " << team2.teamName << std::endl;
 
 	std::cout << "\nSet up your ships:" << std::endl;
 	std::cout << "\nSelect up to 9 ships for your team!" << std::endl;
-	createTeam(team2);
+	createTeam(team2);*/
 
-	/*team2.ships[0].shipType = 'h';
-	team2.ships[0].size = 4;
-	team2.ships[0].atk = 30;
-	team2.ships[0].def = 75;
-
-	team2.ships[1].shipType = 'd';
-	team2.ships[1].size = 6;
-	team2.ships[1].atk = 60;
-	team2.ships[1].def = 150;*/
+	return team;
 }
 
 Teams Menu::addShip(char shipType, Teams tmpTeam, int arrPosition)
@@ -76,24 +52,12 @@ Teams Menu::addShip(char shipType, Teams tmpTeam, int arrPosition)
 	{
 		case 'h':
 			tmpTeam.ships[arrPosition] = hunter;
-			/*tmpTeam.ships[arrPosition].shipType = shipType;
-			tmpTeam.ships[arrPosition].size = 4;
-			tmpTeam.ships[arrPosition].atk = 30;
-			tmpTeam.ships[arrPosition].def = 75;*/
 			break;
 		case 'd':
 			tmpTeam.ships[arrPosition] = destroyer;
-			/*tmpTeam.ships[arrPosition].shipType = shipType;
-			tmpTeam.ships[arrPosition].size = 6;
-			tmpTeam.ships[arrPosition].atk = 60;
-			tmpTeam.ships[arrPosition].def = 150;*/
 			break;
 		case 't':
 			tmpTeam.ships[arrPosition] = tank;
-			/*tmpTeam.ships[arrPosition].shipType = shipType;
-			tmpTeam.ships[arrPosition].size = 8;
-			tmpTeam.ships[arrPosition].atk = 50;
-			tmpTeam.ships[arrPosition].def = 250;*/
 			break;
 		default: std::cout << "no ship to give senpai TT^TT" << std::endl;
 	}
@@ -101,7 +65,7 @@ Teams Menu::addShip(char shipType, Teams tmpTeam, int arrPosition)
 	return tmpTeam;
 }
 
-void Menu::createTeam(Teams Team)
+Teams Menu::createTeam(Teams Team)
 {
 	char playerInput = 'a';
 	int countShips = 0;
@@ -127,10 +91,17 @@ void Menu::createTeam(Teams Team)
 		}
 		else
 		{
-			return;
+			return tmpTeam;
 		}
 		countShips++;
 	}
+
+	return tmpTeam;
+}
+
+void Menu::setTargetShip()
+{
+
 }
 
 void Menu::getStats(Teams tmpTeam, int arrPosition)
@@ -140,25 +111,82 @@ void Menu::getStats(Teams tmpTeam, int arrPosition)
 	std::cout << "Ship size: " << tmpTeam.ships[arrPosition].getShipSize() << std::endl;
 	std::cout << "Ship attak: " << tmpTeam.ships[arrPosition].getShipAtk() << std::endl;
 	std::cout << "Ship defense: " << tmpTeam.ships[arrPosition].getShipDef() << std::endl;
-	/*std::cout << "Team name: " << tmpTeam.teamName << std::endl;
-	std::cout << "Ship type: " << tmpTeam.ships[arrPosition].shipType << std::endl;
-	std::cout << "Ship size: " << tmpTeam.ships[arrPosition].size << std::endl;
-	std::cout << "Ship attak: " << tmpTeam.ships[arrPosition].atk << std::endl;
-	std::cout << "Ship defense: " << tmpTeam.ships[arrPosition].def << std::endl;*/
 }
 
 char Menu::getShipType(Teams tmpShip, int arrPosition)
 {
 	return tmpShip.ships[arrPosition].getShipType();
-	//return tmpShip.ships[arrPosition].shipType;
 }
 
-Teams Menu::destroyShip(Teams tmpShip, int arrPosition)
+int Menu::rollDice()
 {
-	/*Ship* delShip = new Ship;
-	delShip = tmpShip.ships[arrPosition];*/
+	int rolledNr = 0;
+	srand(time(NULL));
 
-	//Ship delShip = tmpShip.ships[arrPosition];
+	rolledNr = rand() % 10;
 
-	delete &tmpShip.ships[arrPosition];
+	return rolledNr;
+}
+
+void Menu::attakShip(Teams targetShip, int arrPosTargShip, int damage)
+{
+	targetShip.ships[arrPosTargShip].getDamage(damage);
+}
+
+//Teams Menu::destroyShip(Teams tmpShip, int arrPosition)
+//{
+//	/*Ship* delShip = new Ship;
+//	delShip = tmpShip.ships[arrPosition];*/
+//
+//	//Ship delShip = tmpShip.ships[arrPosition];
+//
+//	delete &tmpShip.ships[arrPosition];
+//}
+
+void Menu::play(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip)
+{
+	int damage = atkShip.ships[arrPosAtkShip].getShipAtk();
+	int chance = rollDice();
+	int targetSize = targetShip.ships[arrPosTargShip].getShipSize();
+	int type = getShipType(atkShip, arrPosAtkShip);
+
+	if (type == 'D')
+	{
+		std::cout << "Ship is destroyer" << std::endl;
+		chance += 2;
+	}
+
+	if (chance >= targetSize)
+	{
+		if (type == 'H')
+		{
+			std::cout << "Ship is hunter" << std::endl;
+
+			if (chance <= 9)
+			{
+				std::cout << "Crit Hit" << std::endl;
+				/*attakShip(targetShip, arrPosTargShip, damage*2);
+				getStats(targetShip, arrPosTargShip);*/
+			}
+		}
+		else if (type == 'T')
+		{
+			std::cout << "Ship is Tank" << std::endl;
+			/*attakShip(targetShip, arrPosTargShip, damage);
+			getStats(targetShip, arrPosTargShip);
+			play(atkShip, arrPosAtkShip, targetShip, arrPosTargShip);*/
+		}
+		else
+		{
+			std::cout << "Normal attak" << std::endl;
+			/*attakShip(targetShip, arrPosTargShip, damage);
+			getStats(targetShip, arrPosTargShip);*/
+		}
+	}
+	else
+	{
+		std::cout << "Attak failed - enemy attaks" << std::endl;
+		/*attakShip(atkShip, arrPosAtkShip, damage);
+		getStats(atkShip, arrPosAtkShip);*/
+	}
 }
