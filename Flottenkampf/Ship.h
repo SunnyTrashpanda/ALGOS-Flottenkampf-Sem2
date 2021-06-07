@@ -1,8 +1,25 @@
 #pragma once
+
 class Ship
 {
+private:
+
+protected:
+	char type;
+	int size;
+	int atk;
+	int def;
+
 public:
-	void getShip();
-	void damageTargetShip();
+	int getShipAtk();
+	int getShipSize();
+	int getShipDef();
+	char getShipType();
+	void getDamage(int damage);
+	void destroyShip();
+	
+	/*void damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
+	void getDamage(Teams tmpShip, int arrPosition, int damage);
+	void destroyShip(Teams tmpShip, int arrPosition);*/
 };
 
