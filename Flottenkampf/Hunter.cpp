@@ -20,5 +20,5 @@ int Hunter::megaCrit()
 
 int Hunter::heal()
 {
-	return def += 10;s
+	return def += 10;
 }

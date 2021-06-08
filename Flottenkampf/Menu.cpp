@@ -132,6 +132,8 @@ void Menu::getStats(Teams tmpTeam, int arrPosition)
 {
 	std::cout << "Team name: " << tmpTeam.teamName << std::endl;
 	std::cout << "Ship type: " << tmpTeam.ships[arrPosition].getShipType() << std::endl;
+	std::cout << "Ship type: " << tmpTeam.ships[arrPosition].getShipAtk() << std::endl;
+	std::cout << "Ship type: " << tmpTeam.ships[arrPosition].getShipDef() << std::endl;
 	std::cout << "Ship defense: " << tmpTeam.ships[arrPosition].getShipDef() << std::endl;
 	std::cout << "Ship count: " << tmpTeam.shipCount << std::endl;
 	std::cout << "Ship target position: " << tmpTeam.targetShip << std::endl;
@@ -143,7 +145,8 @@ int Menu::rollDice()
 
 	rolledNr = rand() % 10;
 
-	std::cout << "\nYou rolled " << rolledNr << " on hit chance!" << std::endl;
+	std::cout << "\n----------------------------------------" << std::endl;
+	std::cout << "You rolled " << rolledNr << " on hit chance!" << std::endl;
 
 	return rolledNr;
 }
@@ -182,6 +185,7 @@ bool Menu::attackShip(Teams *atkShip, int arrPosAtkShip, Teams *targetShip, int 
 				if (atkShip->exp > 15)
 				{
 					targetShip->ships[arrPosTargShip].getDamage(h.megaCrit());
+					std::cout << "\nMega Hit" << std::endl;
 				}
 				targetShip->ships[arrPosTargShip].getDamage(h.critHit());
 				return false;
@@ -202,6 +206,7 @@ bool Menu::attackShip(Teams *atkShip, int arrPosAtkShip, Teams *targetShip, int 
 			
 			if (atkShip->exp > 1 && damage > 30)
 			{
+				std::cout << "\nAttack Debuff" << std::endl;
 				atkShip->ships[arrPosAtkShip].atkDebuff(t.debuffAtk());
 			}
 			damage = atkShip->ships[arrPosAtkShip].getShipAtk();
