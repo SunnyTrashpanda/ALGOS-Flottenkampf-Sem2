@@ -27,12 +27,27 @@ void Ship::getDamage(int damage)
 	def -= damage;
 }
 
+void Ship::aktDef(int newDef)
+{
+	def = newDef;
+}
+
 void Ship::destroyShip()
 {
 	type = NULL;
 	size = NULL;
 	atk = NULL;
 	def = NULL;
+}
+
+void Ship::addLife(int heal)
+{
+	def = heal;
+}
+
+void Ship::atkDebuff(int debuff)
+{
+	atk -= debuff;
 }
 
 

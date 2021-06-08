@@ -7,3 +7,8 @@ Tank::Tank()
 	atk = 50;
 	def = 250;
 }
+
+int Tank::debuffAtk()
+{
+	return 5;
+}

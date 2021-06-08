@@ -8,4 +8,5 @@ struct Teams
 	Ship ships[9];
 	int shipCount;
 	int targetShip;
+	int exp;
 };

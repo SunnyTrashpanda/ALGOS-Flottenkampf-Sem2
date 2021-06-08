@@ -10,15 +10,15 @@ protected:
 	int atk;
 	int def;
 
-
 public:
 	int getShipAtk();
 	int getShipSize();
 	int getShipDef();
 	char getShipType();
 	void getDamage(int damage);
-	
-	//void damageTargetShip(Teams atkShip, int arrPosAtkShip, Teams targetShip, int arrPosTargShip);
+	void aktDef(int newDef);
 	void destroyShip();
+	void addLife(int heal);
+	void atkDebuff(int debuff);
 };
 

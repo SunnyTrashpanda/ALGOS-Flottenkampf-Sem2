@@ -7,5 +7,6 @@ private:
 
 public:
 	Tank();
+	int debuffAtk();
 };
 

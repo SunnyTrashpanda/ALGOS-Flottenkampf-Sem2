@@ -7,5 +7,8 @@ private:
 
 public:
 	Hunter();
+	int critHit();
+	int megaCrit();
+	int heal();
 };
 

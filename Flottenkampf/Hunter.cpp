@@ -7,3 +7,18 @@ Hunter::Hunter()
 	atk = 30;
 	def = 75;
 }
+
+int Hunter::critHit()
+{
+	return atk*2;
+}
+
+int Hunter::megaCrit()
+{
+	return atk * 5;
+}
+
+int Hunter::heal()
+{
+	return def += 10;s
+}
